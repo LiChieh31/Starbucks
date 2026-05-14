@@ -98,41 +98,67 @@
         <button class="alert-btn" onclick="closeAlert()">確定</button>
     </div>
 
-    <script>
-        const btn = document.getElementById('runaway-btn');
-        const alertBox = document.getElementById('custom-alert');
-        const overlay = document.getElementById('overlay');
+   <script>
+    const btn = document.getElementById('runaway-btn');
+    const alertBox = document.getElementById('custom-alert');
+    const overlay = document.getElementById('overlay');
 
-        const moveButton = () => {
-            const safeWidth = window.innerWidth - btn.clientWidth - 20;
-            const safeHeight = window.innerHeight - btn.clientHeight - 80; 
-            const randomX = Math.floor(Math.random() * safeWidth) + 10;
-            const randomY = Math.floor(Math.random() * safeHeight) + 60; 
-            btn.style.left = randomX + 'px';
-            btn.style.top = randomY + 'px';
-            btn.style.transform = 'none'; 
-        };
+    // 紀錄目前的象限，避免連續跳在同一個區域
+    let currentQuadrant = -1;
 
-        const showAlert = () => {
-            alertBox.style.display = 'block';
-            overlay.style.display = 'block';
-        };
-
-        window.closeAlert = () => {
-            alertBox.style.display = 'none';
-            overlay.style.display = 'none';
-            moveButton();
-        };
-
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); 
-            moveButton();
-        });
+    const moveButton = () => {
+        const btnWidth = btn.clientWidth;
+        const btnHeight = btn.clientHeight;
         
-        btn.addEventListener('mouseover', moveButton);
+        // 將螢幕劃分為四個象限的安全區域
+        // 1:左上, 2:右上, 3:左下, 4:右下
+        const quadrants = [
+            { x: [20, window.innerWidth/2 - btnWidth], y: [80, window.innerHeight/2 - btnHeight] },
+            { x: [window.innerWidth/2 + 20, window.innerWidth - btnWidth - 20], y: [80, window.innerHeight/2 - btnHeight] },
+            { x: [20, window.innerWidth/2 - btnWidth], y: [window.innerHeight/2 + 20, window.innerHeight - btnHeight - 20] },
+            { x: [window.innerWidth/2 + 20, window.innerWidth - btnWidth - 20], y: [window.innerHeight/2 + 20, window.innerHeight - btnHeight - 20] }
+        ];
+
+        // 隨選一個跟現在不同的象限
+        let nextQuadrant;
+        do {
+            nextQuadrant = Math.floor(Math.random() * 4);
+        } while (nextQuadrant === currentQuadrant);
         
-        // 點到按鈕時觸發自定義彈窗
-        btn.addEventListener('click', showAlert);
-    </script>
+        currentQuadrant = nextQuadrant;
+        const target = quadrants[nextQuadrant];
+
+        // 在選定的象限內隨機取點
+        const randomX = Math.floor(Math.random() * (target.x[1] - target.x[0] + 1)) + target.x[0];
+        const randomY = Math.floor(Math.random() * (target.y[1] - target.y[0] + 1)) + target.y[0];
+
+        btn.style.left = randomX + 'px';
+        btn.style.top = randomY + 'px';
+        btn.style.transform = 'none'; 
+    };
+
+    const showAlert = () => {
+        alertBox.style.display = 'block';
+        overlay.style.display = 'block';
+    };
+
+    window.closeAlert = () => {
+        alertBox.style.display = 'none';
+        overlay.style.display = 'none';
+        moveButton();
+    };
+
+    // 手機版：只要手指摸到按鈕邊緣就逃跑
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault(); 
+        moveButton();
+    });
+    
+    // 電腦版：滑鼠靠近就逃跑
+    btn.addEventListener('mouseover', moveButton);
+    
+    // 點到按鈕時觸發
+    btn.addEventListener('click', showAlert);
+</script>
 </body>
 </html>
