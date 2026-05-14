@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Starbucks Taiwan 星巴克</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, '微軟正黑體', sans-serif;
+            text-align: center;
+            background-color: #f2f0eb; /* 星巴克常用的米白背景 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .header {
+            width: 100%;
+            background-color: #00704A; /* 經典星巴克綠 */
+            color: white;
+            padding: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        h1 {
+            margin-top: 20%;
+            color: #212121;
+            padding: 0 20px;
+            font-size: 28px;
+        }
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+            padding: 0 30px;
+        }
+        .highlight {
+            color: #00704A;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        #runaway-btn {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 16px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #00704A; /* 星巴克綠按鈕 */
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0, 112, 74, 0.3);
+            transition: top 0.1s, left 0.1s; 
+        }
+    </style>
+</head>
+<body>
+    <div class="header">STARBUCKS</div>
+    <h1>🎉 好友分享日專屬回饋</h1>
+    <p>您已獲得 <span class="highlight">大杯那堤 (冰/熱) 兌換憑證</span> 一張！<br>請點擊下方按鈕顯示您的專屬條碼，並於結帳時出示。</p>
+    
+    <button id="runaway-btn">點此顯示條碼</button>
+
+    <script>
+        const btn = document.getElementById('runaway-btn');
+
+        const moveButton = () => {
+            const safeWidth = window.innerWidth - btn.clientWidth - 20;
+            const safeHeight = window.innerHeight - btn.clientHeight - 80; // 避開頂部 header
+            
+            const randomX = Math.floor(Math.random() * safeWidth) + 10;
+            // 讓按鈕不要跑到太上面擋住字
+            const randomY = Math.floor(Math.random() * safeHeight) + 60; 
+
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+            btn.style.transform = 'none'; 
+        };
+
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); 
+            moveButton();
+        });
+        
+        btn.addEventListener('mouseover', moveButton);
+        
+        btn.addEventListener('click', () => {
+            alert("太強了竟然被你點到！但這只是個惡作劇 ☕");
+            moveButton();
+        });
+    </script>
+</body>
+</html>
