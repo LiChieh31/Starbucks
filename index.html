@@ -98,28 +98,27 @@
         <button class="alert-btn" onclick="closeAlert()">確定</button>
     </div>
 
-   <script>
+  <script>
     const btn = document.getElementById('runaway-btn');
     const alertBox = document.getElementById('custom-alert');
     const overlay = document.getElementById('overlay');
 
-    // 紀錄目前的象限，避免連續跳在同一個區域
     let currentQuadrant = -1;
 
     const moveButton = () => {
+        // 1. 增加一點隨機縮放，讓按鈕在視覺上更難鎖定
+        const randomScale = 0.8 + Math.random() * 0.4; // 縮放範圍 0.8 ~ 1.2
+        
         const btnWidth = btn.clientWidth;
         const btnHeight = btn.clientHeight;
         
-        // 將螢幕劃分為四個象限的安全區域
-        // 1:左上, 2:右上, 3:左下, 4:右下
         const quadrants = [
-            { x: [20, window.innerWidth/2 - btnWidth], y: [80, window.innerHeight/2 - btnHeight] },
-            { x: [window.innerWidth/2 + 20, window.innerWidth - btnWidth - 20], y: [80, window.innerHeight/2 - btnHeight] },
-            { x: [20, window.innerWidth/2 - btnWidth], y: [window.innerHeight/2 + 20, window.innerHeight - btnHeight - 20] },
-            { x: [window.innerWidth/2 + 20, window.innerWidth - btnWidth - 20], y: [window.innerHeight/2 + 20, window.innerHeight - btnHeight - 20] }
+            { x: [20, window.innerWidth/2 - btnWidth], y: [100, window.innerHeight/2 - btnHeight] },
+            { x: [window.innerWidth/2 + 20, window.innerWidth - btnWidth - 20], y: [100, window.innerHeight/2 - btnHeight] },
+            { x: [20, window.innerWidth/2 - btnWidth], y: [window.innerHeight/2 + 20, window.innerHeight - btnHeight - 40] },
+            { x: [window.innerWidth/2 + 20, window.innerWidth - btnWidth - 20], y: [window.innerHeight/2 + 20, window.innerHeight - btnHeight - 40] }
         ];
 
-        // 隨選一個跟現在不同的象限
         let nextQuadrant;
         do {
             nextQuadrant = Math.floor(Math.random() * 4);
@@ -128,13 +127,14 @@
         currentQuadrant = nextQuadrant;
         const target = quadrants[nextQuadrant];
 
-        // 在選定的象限內隨機取點
         const randomX = Math.floor(Math.random() * (target.x[1] - target.x[0] + 1)) + target.x[0];
         const randomY = Math.floor(Math.random() * (target.y[1] - target.y[0] + 1)) + target.y[0];
 
         btn.style.left = randomX + 'px';
         btn.style.top = randomY + 'px';
-        btn.style.transform = 'none'; 
+        btn.style.transform = `scale(${randomScale})`; 
+        // 增加一個隨機旋轉，增加視覺迷惑度
+        btn.style.transform += ` rotate(${Math.floor(Math.random() * 20 - 10)}deg)`;
     };
 
     const showAlert = () => {
@@ -148,17 +148,38 @@
         moveButton();
     };
 
-    // 手機版：只要手指摸到按鈕邊緣就逃跑
+    // --- 核心防禦：多重事件攔截 ---
+
+    // 1. 手機版最關鍵：touchmove (手指滑過來就跑)
+    // 很多時候手指還沒壓下去，只是靠近邊緣就會觸發
+    document.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        const rect = btn.getBoundingClientRect();
+        // 如果手指距離按鈕邊緣 50 像素內，就直接移走
+        const offset = 50; 
+        if (touch.clientX > rect.left - offset && touch.clientX < rect.right + offset &&
+            touch.clientY > rect.top - offset && touch.clientY < rect.bottom + offset) {
+            moveButton();
+        }
+    }, { passive: false });
+
+    // 2. 攔截所有點擊行為
     btn.addEventListener('touchstart', (e) => {
-        e.preventDefault(); 
+        e.preventDefault(); // 徹底禁用手機版的點擊預期行為
         moveButton();
     });
-    
-    // 電腦版：滑鼠靠近就逃跑
+
     btn.addEventListener('mouseover', moveButton);
-    
-    // 點到按鈕時觸發
-    btn.addEventListener('click', showAlert);
+
+    // 3. 終極保險：如果真的被點到了，有 90% 的機率是「假點擊」
+    btn.addEventListener('click', (e) => {
+        // 加入一個隨機機率，就算點到了也只有 10% 的機會跳視窗，其餘 90% 直接移走
+        if (Math.random() > 0.1) {
+            moveButton();
+        } else {
+            showAlert();
+        }
+    });
 </script>
 </body>
 </html>
