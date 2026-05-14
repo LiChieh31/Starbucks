@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Starbucks Taiwan 星巴克</title>
+    
+    <!-- 👇 這些是專門給 LINE / FB 看的預覽設定 👇 -->
+    <meta property="og:title" content="STARBUCKS 星巴克 | 專屬數位體驗" />
+    <meta property="og:description" content="好友分享日！恭喜您獲得【大杯那堤 (冰/熱) 兌換憑證】一張！請點擊領取您的專屬電子條碼，限時兌換中。" />
+    <!-- 這是一張高畫質的星巴克咖啡圖片網址，LINE 會把它抓成預覽圖 -->
+    <meta property="og:image" content="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=1200&auto=format&fit=crop" />
+    <meta property="og:type" content="website" />
+
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, '微軟正黑體', sans-serif;
             text-align: center;
-            background-color: #f2f0eb; /* 星巴克常用的米白背景 */
+            background-color: #f2f0eb; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -18,7 +26,7 @@
         }
         .header {
             width: 100%;
-            background-color: #00704A; /* 經典星巴克綠 */
+            background-color: #00704A; 
             color: white;
             padding: 15px 0;
             font-size: 20px;
@@ -51,7 +59,7 @@
             font-size: 20px;
             font-weight: bold;
             color: white;
-            background-color: #00704A; /* 星巴克綠按鈕 */
+            background-color: #00704A; 
             border: none;
             border-radius: 30px;
             box-shadow: 0 4px 10px rgba(0, 112, 74, 0.3);
@@ -68,27 +76,20 @@
 
     <script>
         const btn = document.getElementById('runaway-btn');
-
         const moveButton = () => {
             const safeWidth = window.innerWidth - btn.clientWidth - 20;
-            const safeHeight = window.innerHeight - btn.clientHeight - 80; // 避開頂部 header
-            
+            const safeHeight = window.innerHeight - btn.clientHeight - 80; 
             const randomX = Math.floor(Math.random() * safeWidth) + 10;
-            // 讓按鈕不要跑到太上面擋住字
             const randomY = Math.floor(Math.random() * safeHeight) + 60; 
-
             btn.style.left = randomX + 'px';
             btn.style.top = randomY + 'px';
             btn.style.transform = 'none'; 
         };
-
         btn.addEventListener('touchstart', (e) => {
             e.preventDefault(); 
             moveButton();
         });
-        
         btn.addEventListener('mouseover', moveButton);
-        
         btn.addEventListener('click', () => {
             alert("太強了竟然被你點到！但這只是個惡作劇 ☕");
             moveButton();
