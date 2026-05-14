@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Starbucks Taiwan 星巴克</title>
     
-    <!-- 👇 這些是專門給 LINE / FB 看的預覽設定 👇 -->
     <meta property="og:title" content="STARBUCKS 星巴克 | 專屬數位體驗" />
-    <meta property="og:description" content="好友分享日！恭喜您獲得【大杯那堤 (冰/熱) 兌換憑證】一張！請點擊領取您的專屬電子條碼，限時兌換中。" />
-    <!-- 這是一張高畫質的星巴克咖啡圖片網址，LINE 會把它抓成預覽圖 -->
+    <meta property="og:description" content="好友分享日！恭喜您獲得【大杯那堤 (冰/熱) 兌換憑證】一張！限時兌換中。" />
     <meta property="og:image" content="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=1200&auto=format&fit=crop" />
-    <meta property="og:type" content="website" />
 
     <style>
         body {
@@ -33,27 +30,13 @@
             font-weight: bold;
             letter-spacing: 2px;
         }
-        h1 {
-            margin-top: 20%;
-            color: #212121;
-            padding: 0 20px;
-            font-size: 28px;
-        }
-        p {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.5;
-            padding: 0 30px;
-        }
-        .highlight {
-            color: #00704A;
-            font-weight: bold;
-            font-size: 20px;
-        }
+        h1 { margin-top: 20%; color: #212121; padding: 0 20px; font-size: 28px; }
+        p { color: #666; font-size: 16px; line-height: 1.5; padding: 0 30px; }
+        .highlight { color: #00704A; font-weight: bold; font-size: 20px; }
+        
         #runaway-btn {
             position: absolute;
-            top: 60%;
-            left: 50%;
+            top: 60%; left: 50%;
             transform: translate(-50%, -50%);
             padding: 16px 40px;
             font-size: 20px;
@@ -64,18 +47,62 @@
             border-radius: 30px;
             box-shadow: 0 4px 10px rgba(0, 112, 74, 0.3);
             transition: top 0.1s, left 0.1s; 
+            z-index: 10;
+        }
+
+        /* 👇 自定義彈窗樣式 (不會顯示網址) 👇 */
+        #custom-alert {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 100;
+            width: 80%;
+            max-width: 300px;
+        }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 90;
+        }
+        .alert-btn {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: #00704A;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="header">STARBUCKS</div>
     <h1>🎉 好友分享日專屬回饋</h1>
-    <p>您已獲得 <span class="highlight">大杯那堤 (冰/熱) 兌換憑證</span> 一張！<br>請點擊下方按鈕顯示您的專屬條碼，並於結帳時出示。</p>
+    <p>您已獲得 <span class="highlight">大杯那堤 (冰/熱) 兌換憑證</span> 一張！<br>請點擊下方按鈕顯示您的專屬條碼。</p>
     
     <button id="runaway-btn">點此顯示條碼</button>
 
+    <!-- 自定義彈窗結構 -->
+    <div id="overlay"></div>
+    <div id="custom-alert">
+        <div style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">系統提示</div>
+        <div>太強了竟然被你點到！但這只是個惡作劇 ☕</div>
+        <button class="alert-btn" onclick="closeAlert()">確定</button>
+    </div>
+
     <script>
         const btn = document.getElementById('runaway-btn');
+        const alertBox = document.getElementById('custom-alert');
+        const overlay = document.getElementById('overlay');
+
         const moveButton = () => {
             const safeWidth = window.innerWidth - btn.clientWidth - 20;
             const safeHeight = window.innerHeight - btn.clientHeight - 80; 
@@ -85,15 +112,27 @@
             btn.style.top = randomY + 'px';
             btn.style.transform = 'none'; 
         };
+
+        const showAlert = () => {
+            alertBox.style.display = 'block';
+            overlay.style.display = 'block';
+        };
+
+        window.closeAlert = () => {
+            alertBox.style.display = 'none';
+            overlay.style.display = 'none';
+            moveButton();
+        };
+
         btn.addEventListener('touchstart', (e) => {
             e.preventDefault(); 
             moveButton();
         });
+        
         btn.addEventListener('mouseover', moveButton);
-        btn.addEventListener('click', () => {
-            alert("太強了竟然被你點到！但這只是個惡作劇 ☕");
-            moveButton();
-        });
+        
+        // 點到按鈕時觸發自定義彈窗
+        btn.addEventListener('click', showAlert);
     </script>
 </body>
 </html>
